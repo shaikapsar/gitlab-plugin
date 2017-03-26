@@ -102,13 +102,15 @@ public class PushBuildAction extends BuildWebHookAction {
                             for(GitSCMExtension gitSCMExtension: gitSCMSource.getExtensions()) {
                                 //Igonre commits from certain users.
                                 if (gitSCMExtension instanceof UserExclusion) {
-                                    if (isIgonreUserCommit(latestCommit(pushHook), (UserExclusion) gitSCMExtension)){
+                                    if (isIgonreUserCommit(latestCommit(pushHook), 
+                                                           (UserExclusion) gitSCMExtension)){
                                         return ;
                                     }
                                 }
                                 //Ignore commits with certains messages.
                                 if (gitSCMExtension instanceof MessageExclusion){
-                                    if (isIgnoreCustomCommit(latestCommit(pushHook), (MessageExclusion) gitSCMExtension)){
+                                    if (isIgnoreCustomCommit(latestCommit(pushHook), 
+                                                             (MessageExclusion) gitSCMExtension)){
                                         return ;
                                     }
                                 }
@@ -125,7 +127,7 @@ public class PushBuildAction extends BuildWebHookAction {
                                 ((SCMSourceOwner) project).onSCMSourceUpdated(scmSource);
                             } else {
                                 LOGGER.log(Level.FINE, "Ignore on push notification for scmSourceOwner {0} about changes for {1}",
-                                    toArray(project.getName(), gitSCMSource.getRemote()));
+                                           toArray(project.getName(), gitSCMSource.getRemote()));
                             }
                         }
                     } catch (URISyntaxException e) {
@@ -148,14 +150,16 @@ public class PushBuildAction extends BuildWebHookAction {
                 commit.getMessage().contains("[ci-skip]");
 
             if(isCiSkip)
-                LOGGER.log(Level.FINE, "SkipCI on commit {0} for commit message {1} ", toArray(commit.getId(), commit.getMessage()));
+                LOGGER.log(Level.FINE, "SkipCI on commit {0} for commit message {1} ",
+                           toArray(commit.getId(), commit.getMessage()));
             return isCiSkip;
         }
 
         private boolean isIgonreUserCommit(Commit commit, UserExclusion extension) {
             String author = commit.getAuthor().getName();
             if(extension.getExcludedUsersNormalized().contains(author)){
-                LOGGER.log(Level.FINE, "Ignored commit {0}: Found excluded author: {1}", toArray(commit.getId(), author));
+                LOGGER.log(Level.FINE, "Ignored commit {0}: Found excluded author: {1}",
+                           toArray(commit.getId(), author));
                 return true;
             }else {
                 return false;
@@ -171,7 +175,8 @@ public class PushBuildAction extends BuildWebHookAction {
                 }
                 String msg = commit.getMessage();
                 if (excludedPattern.matcher(msg).matches()) {
-                    LOGGER.log(Level.FINE, "Ignored commit {0}: Found excluded message: {1}", toArray(commit.getId(), msg));
+                    LOGGER.log(Level.FINE, "Ignored commit {0}: Found excluded message: {1}",
+                               toArray(commit.getId(), msg));
                     isIgnoreCustomCommit = true;
                 }
             } catch (Exception exception) {
